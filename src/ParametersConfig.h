@@ -19,6 +19,7 @@
 #define WIFI_PASSWORD "onx8rrcr"
 #define MQTT_BROKER_IP "192.168.0.13"
 #define MQTT_BROKER_PORT 1883
-#define MQTT_TOPIC "vinicio_tst"
+#define MQTT_TOPIC_IN "comandos/relay"
+#define MQTT_TOPIC_OUT "status/relay"
 
 #endif // PARAMETERS_CONFIG

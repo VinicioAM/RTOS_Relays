@@ -14,6 +14,8 @@ struct TaskRelayParameters
     int count;
 };
 
+void setRelayStateFromMQTT(int relayIndex, bool desiredState);
+void setRelayStateFromSWITCH(int relayIndex, bool desiredState);
 void initializeRelayTask(Relay **relays, Switch **switches);
 
 #endif
