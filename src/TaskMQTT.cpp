@@ -3,22 +3,28 @@
 #include "TaskMQTT.h"
 #include "TaskRelay.h"
 
+#include <AsyncMqttClient.h>
+
 // Queue for MQTT messages
 static QueueHandle_t xQueue_MQTT = NULL;
 
-// MQTT client
-static WiFiClient wifiClient;
-static PubSubClient MQTT(wifiClient);
+// Async MQTT Client
+static AsyncMqttClient mqttClient;
 
 // Internal function prototypes
 static void mqttTask(void *pvParameters);
 static void initMQTT();
 static void connectMQTT();
-static void mqttCallback(char *topic, byte *payload, unsigned int length);
+
+// AsyncMqttClient Callbacks
+static void onMqttConnect(bool sessionPresent);
+static void onMqttDisconnect(AsyncMqttClientDisconnectReason reason);
+static void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties properties,
+                          size_t len, size_t index, size_t total);
 
 void initializeMQTTTask()
 {
-    // Creates a queue for sending messages
+    // Create the queue for MQTT messages
     xQueue_MQTT = xQueueCreate(20, sizeof(TMessage_MQTT));
     if (xQueue_MQTT == NULL)
     {
@@ -37,22 +43,30 @@ void initializeMQTTTask()
     );
 }
 
-// Callback to receive messages from the MQTT broker
-static void mqttCallback(char *topic, byte *payload, unsigned int length)
+// Callback for receiving messages from the MQTT broker
+static void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties properties,
+                          size_t len, size_t index, size_t total)
 {
-    payload[length] = '\0'; // Null-terminate the received string
-    Serial.printf("RECEIVED -> Topic = %s, Payload = %s\n", topic, (char *)payload);
+    // Ensure the payload string is null-terminated
+    char tempPayload[128];
+    if (len < sizeof(tempPayload))
+    {
+        memcpy(tempPayload, payload, len);
+        tempPayload[len] = '\0';
 
-    // Exemplo de decodificação simples do payload MQTT "xy":
-    // x = índice do relay (char), y = estado '0' ou '1'
-    char relayChar = payload[0];
-    char stateChar = payload[1];
+        Serial.printf("RECEIVED -> Topic = %s, Payload = %s\n", topic, tempPayload);
 
-    int relayIndex = relayChar - '0';
-    bool desiredState = (stateChar == '1');
+        // Simple decoding example of the payload "xy":
+        // x = relay index (char), y = state '0' or '1'
+        char relayChar = tempPayload[0];
+        char stateChar = tempPayload[1];
 
-    // Chamar a função para enviar o evento ao relayTask
-    setRelayStateFromMQTT(relayIndex, desiredState);
+        int relayIndex = relayChar - '0';
+        bool desiredState = (stateChar == '1');
+
+        // Call the function to send the event to relayTask
+        setRelayStateFromMQTT(relayIndex, desiredState);
+    }
 }
 
 // Function to insert a message into the MQTT queue
@@ -60,6 +74,7 @@ void publishToMQTT(int relayIndex, bool state)
 {
     if (xQueue_MQTT == NULL)
         return; // if the queue does not exist
+
     TMessage_MQTT msg;
     msg.relayIndex = relayIndex;
     msg.state = state;
@@ -69,39 +84,44 @@ void publishToMQTT(int relayIndex, bool state)
 // Internal function to initialize MQTT
 static void initMQTT()
 {
-    MQTT.setServer(MQTT_BROKER_IP, MQTT_BROKER_PORT);
-    MQTT.setCallback(mqttCallback);
+    mqttClient.onConnect(onMqttConnect);
+    mqttClient.onDisconnect(onMqttDisconnect);
+    mqttClient.onMessage(onMqttMessage);
+    mqttClient.setServer(MQTT_BROKER_IP, MQTT_BROKER_PORT);
 }
 
-// Internal function to connect to the MQTT broker
+// Function called when connected to the MQTT broker
+static void onMqttConnect(bool sessionPresent)
+{
+    Serial.println("Connected to MQTT broker!");
+    uint16_t packetIdSub = mqttClient.subscribe(MQTT_TOPIC_IN, MQTT_QOS);
+    Serial.printf("Subscribed to topic: %s, PacketId: %d\n", MQTT_TOPIC_IN, packetIdSub);
+}
+
+// Function called when disconnected from the MQTT broker
+static void onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
+{
+    Serial.println("Disconnected from MQTT. Trying to reconnect...");
+}
+
+// Function to connect to the MQTT broker with retries
 static void connectMQTT()
 {
-    while (!MQTT.connected())
+    if (WiFi.status() == WL_CONNECTED)
     {
         Serial.println("Connecting to MQTT broker...");
-        if (MQTT.connect("ESP32_Client"))
-        {
-            Serial.println("Connected to MQTT broker!");
-            MQTT.subscribe(MQTT_TOPIC_IN);
-            Serial.printf("Subscribed to topic: %s\n", MQTT_TOPIC_IN);
-        }
-        else
-        {
-            Serial.print("MQTT connection failed. Error code: ");
-            Serial.println(MQTT.state());
-            vTaskDelay(2000 / portTICK_PERIOD_MS);
-        }
+        mqttClient.connect();
     }
 }
 
-// MQTT task that maintains WiFi connection, MQTT connection, and publishes messages from the queue
+// MQTT task that maintains WiFi connection, MQTT connection and publishes messages from the queue
 static void mqttTask(void *pvParameters)
 {
     initMQTT();
 
     for (;;)
     {
-        // Check WiFi connection
+        // Check Wi-Fi connection
         if (WiFi.status() != WL_CONNECTED)
         {
             Serial.println("Wi-Fi disconnected. Trying to reconnect...");
@@ -109,28 +129,27 @@ static void mqttTask(void *pvParameters)
         }
         else
         {
-            // Connect to MQTT broker if necessary
-            if (!MQTT.connected())
+            // Connect to the MQTT broker if necessary
+            if (!mqttClient.connected())
             {
                 connectMQTT();
             }
-            // Check queue to publish messages
-            if (MQTT.connected() && xQueue_MQTT != NULL)
+
+            // If connected to MQTT and the queue exists
+            if (mqttClient.connected() && xQueue_MQTT != NULL)
             {
                 TMessage_MQTT msg;
-                // Try to receive a message from the queue (non-blocking)
+                // Attempt to receive a message from the queue (non-blocking)
                 if (xQueueReceive(xQueue_MQTT, &msg, 10 / portTICK_PERIOD_MS) == pdPASS)
                 {
                     // Publish the received message
                     char message[50];
                     snprintf(message, sizeof(message), "%d%d", msg.relayIndex, msg.state ? 1 : 0);
-                    MQTT.publish(MQTT_TOPIC_OUT, message);
-                    Serial.printf("SENT -> Topic = %s Payload = %s\n", MQTT_TOPIC_OUT, message);
+                    Serial.printf("SENT -> Topic = %s, Payload = %s\n", MQTT_TOPIC_OUT, message);
                 }
             }
-            MQTT.loop();
         }
-        // Wait interval to avoid excessive CPU usage
+        // Interval to avoid excessive CPU usage
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }

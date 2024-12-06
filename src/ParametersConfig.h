@@ -21,5 +21,6 @@
 #define MQTT_BROKER_PORT 1883
 #define MQTT_TOPIC_IN "from_MQTT_to_device"
 #define MQTT_TOPIC_OUT "from_device_to_relay"
+#define MQTT_QOS 2
 
 #endif // PARAMETERS_CONFIG
