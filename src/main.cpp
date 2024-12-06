@@ -7,7 +7,6 @@
 #include "TaskWiFi.h"
 #include "TaskMQTT.h"
 
-// Vetores para armazenar as instâncias de relés e switches
 Relay *relays[RELAYS_AND_SWITCHES_COUNT];
 Switch *switches[RELAYS_AND_SWITCHES_COUNT];
 
@@ -15,13 +14,11 @@ void setup()
 {
   Serial.begin(115200);
 
-  // Configura as instâncias dos relés e switches
-  relays[0] = new Relay(PIN_Output_RelayA);    // GPIO 2 para o primeiro relé
-  switches[0] = new Switch(PIN_Input_SwitchA); // GPIO 12 para o primeiro switch
-  relays[1] = new Relay(PIN_Output_RelayB);    // GPIO 4 para o segundo relé
-  switches[1] = new Switch(PIN_Input_SwitchB); // GPIO 14 para o segundo switch
+  relays[0] = new Relay(PIN_Output_RelayA);
+  switches[0] = new Switch(PIN_Input_SwitchA);
+  relays[1] = new Relay(PIN_Output_RelayB);
+  switches[1] = new Switch(PIN_Input_SwitchB);
 
-  // Configura o pino do LED como saída
   pinMode(PIN_Input_SwitchA, INPUT);
   pinMode(PIN_Output_RelayA, OUTPUT);
   pinMode(PIN_Input_SwitchB, INPUT);
@@ -30,7 +27,7 @@ void setup()
 
   initializeRelayTask(relays, switches);
   initializeWiFiTask();
-  // initializeMQTTTask();
+  initializeMQTTTask();
 }
 
 void loop()

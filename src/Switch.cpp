@@ -1,6 +1,6 @@
 #include "Switch.h"
 
-// Construtor: inicializa o pino e define o estado inicial
+// Construtor
 Switch::Switch(int SwitchPin)
     : PIN_InputButton(SwitchPin), actualState(false), readingValue(false),
       actualState_Last(false), elapse_time(0), transition_started(false)
@@ -8,12 +8,10 @@ Switch::Switch(int SwitchPin)
     pinMode(PIN_InputButton, INPUT); // Configura o pino como entrada
 }
 
-// RLê o Interruptor
 bool Switch::readValue()
 {
     readingValue = digitalRead(this->PIN_InputButton);
 
-    // if (InputPin_Value != relay.getOutputState() && !transition_started)
     if (readingValue != actualState_Last && !transition_started)
     {
         // A switch change is detected, so start the debounce cycle

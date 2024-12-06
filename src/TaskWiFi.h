@@ -6,5 +6,6 @@
 #include "freertos/task.h"
 
 void initializeWiFiTask();
+void reconnectWiFi();
 
 #endif // TASK_WIFI_H

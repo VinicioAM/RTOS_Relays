@@ -6,8 +6,8 @@
 #define DEBOUNCE_TIME_ALEXA_SHORT 400
 #define DEBOUNCE_TIME_ALEXA_MEDIUM 1500
 #define DEBOUNCE_TIME_ALEXA_LONG 35000
-#define PRINT_IP_DELAY 20000 // Serial communication, will print ESP32 IP
-#define BLINK_DELAY 350      // Serial communication, will print ESP32 IP
+#define PRINT_IP_DELAY 20000
+#define BLINK_DELAY 350
 #define PWM_CHANNEL 0
 #define PWM_FREQ 1000
 #define PWM_RESOL 8

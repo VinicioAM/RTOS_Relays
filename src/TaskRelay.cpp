@@ -7,7 +7,6 @@ void relayTask(void *parameter)
     TaskRelayParameters *params = (TaskRelayParameters *)parameter;
     Relay **relays = params->relays;
     Switch **switches = params->switches;
-    // bool *lastStates = new bool[count];
     bool lastStates[RELAYS_AND_SWITCHES_COUNT];
 
     while (true)
@@ -32,12 +31,12 @@ void initializeRelayTask(Relay **relays, Switch **switches)
     params.count = RELAYS_AND_SWITCHES_COUNT;
 
     xTaskCreatePinnedToCore(
-        relayTask,   // Função da task
-        "RelayTask", // Nome da task
-        1000,        // Tamanho da stack
-        &params,     // Parâmetro da task
-        1,           // Prioridade
-        NULL,        // Handle da task
-        1            // Núcleo onde rodará a task (0 ou 1 no ESP32)
+        relayTask,   // Task function
+        "RelayTask", // Task name
+        1000,        // Stack size
+        &params,     // Task parameter
+        1,           // Priority
+        NULL,        // Task handle
+        1            // Core where the task will run (0 or 1 on ESP32)
     );
 }

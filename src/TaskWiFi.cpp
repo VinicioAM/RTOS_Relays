@@ -5,6 +5,11 @@
 static String ipAddress;
 static bool connected = false;
 
+void reconnectWiFi()
+{
+    WiFi.reconnect();
+}
+
 void wifiTask(void *param)
 {
 
@@ -40,13 +45,13 @@ void wifiTask(void *param)
 void initializeWiFiTask()
 {
     xTaskCreatePinnedToCore(
-        wifiTask,   // Função da task
-        "WiFiTask", // Nome da task
-        4096,       // Tamanho da stack
-        NULL,       // Parâmetros
-        1,          // Prioridade
+        wifiTask,   // Task function
+        "WiFiTask", // Task name
+        4096,       // Stack size
+        NULL,       // Parameters
+        1,          // Priority
         NULL,       // Handle
-        1           // Core para rodar a task
+        1           // Core to run the task
     );
 }
 

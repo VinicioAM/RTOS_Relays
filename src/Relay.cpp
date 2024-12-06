@@ -1,12 +1,11 @@
 #include "Relay.h"
 
-// Construtor: Configurações iniciais
+// Construtor: Initial Config
 Relay::Relay(int relayPin) : pin(relayPin), state(false)
 {
     //
 }
 
-// Liga o relé
 bool Relay::reverseState()
 {
     state = !state;
@@ -14,21 +13,18 @@ bool Relay::reverseState()
     return state;
 }
 
-// Liga o relé
 void Relay::turnOn()
 {
     state = true;
     digitalWrite(pin, HIGH);
 }
 
-// Desliga o relé
 void Relay::turnOff()
 {
     state = false;
     digitalWrite(pin, LOW);
 }
 
-// Retorna o estado atual do relé
 bool Relay::getState()
 {
     return state;

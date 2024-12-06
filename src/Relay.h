@@ -6,18 +6,17 @@
 class Relay
 {
 private:
-    int pin;    // Pino do relé
-    bool state; // Estado do relé (ligado/desligado)
+    int pin;    // Relay's Output Pin
+    bool state; // Relay's State (on/off)
 
 public:
     // Construtor
     Relay(int relayPin);
 
-    // Métodos para controle do relé
-    void turnOn();       // Liga o relé
-    void turnOff();      // Desliga o relé
-    bool reverseState(); // Inverte o estado atual do relé
-    bool getState();     // Retorna o estado atual do relé
+    void turnOn();
+    void turnOff();
+    bool reverseState();
+    bool getState();
 };
 
 #endif // RELAY_H
