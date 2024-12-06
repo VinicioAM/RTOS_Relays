@@ -19,7 +19,7 @@
 #define WIFI_PASSWORD "onx8rrcr"
 #define MQTT_BROKER_IP "192.168.0.13"
 #define MQTT_BROKER_PORT 1883
-#define MQTT_TOPIC_IN "comandos/relay"
-#define MQTT_TOPIC_OUT "status/relay"
+#define MQTT_TOPIC_IN "from_MQTT_to_device"
+#define MQTT_TOPIC_OUT "from_device_to_relay"
 
 #endif // PARAMETERS_CONFIG

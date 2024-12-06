@@ -37,6 +37,24 @@ void initializeMQTTTask()
     );
 }
 
+// Callback to receive messages from the MQTT broker
+static void mqttCallback(char *topic, byte *payload, unsigned int length)
+{
+    payload[length] = '\0'; // Null-terminate the received string
+    Serial.printf("RECEIVED -> Topic = %s, Payload = %s\n", topic, (char *)payload);
+
+    // Exemplo de decodificação simples do payload MQTT "xy":
+    // x = índice do relay (char), y = estado '0' ou '1'
+    char relayChar = payload[0];
+    char stateChar = payload[1];
+
+    int relayIndex = relayChar - '0';
+    bool desiredState = (stateChar == '1');
+
+    // Chamar a função para enviar o evento ao relayTask
+    setRelayStateFromMQTT(relayIndex, desiredState);
+}
+
 // Function to insert a message into the MQTT queue
 void publishToMQTT(int relayIndex, bool state)
 {
@@ -76,30 +94,6 @@ static void connectMQTT()
     }
 }
 
-// Callback to receive messages from the MQTT broker
-static void mqttCallback(char *topic, byte *payload, unsigned int length)
-{
-    Serial.printf("Message received on topic: %s\n", topic);
-    payload[length] = '\0'; // Null-terminate the received string
-    Serial.printf("Payload: %s\n", (char *)payload);
-
-    // Exemplo de decodificação simples do payload MQTT "xy":
-    // x = índice do relay (char), y = estado '0' ou '1'
-    char relayChar = payload[0];
-    char stateChar = payload[1];
-
-    int relayIndex = relayChar - '0';
-    bool desiredState = (stateChar == '1');
-
-    // Chamar a função para enviar o evento ao relayTask
-    Serial.printf("msg recebida -> %s\n", (char *)payload);
-    Serial.printf("relayChar -> %c\n", relayChar);
-    Serial.printf("stateChar -> %c\n", stateChar);
-    Serial.printf("relayIndex -> %d\n", relayIndex);
-    Serial.printf("desiredState -> %d\n", desiredState);
-    setRelayStateFromMQTT(relayIndex, desiredState);
-}
-
 // MQTT task that maintains WiFi connection, MQTT connection, and publishes messages from the queue
 static void mqttTask(void *pvParameters)
 {
@@ -131,7 +125,7 @@ static void mqttTask(void *pvParameters)
                     char message[50];
                     snprintf(message, sizeof(message), "%d%d", msg.relayIndex, msg.state ? 1 : 0);
                     MQTT.publish(MQTT_TOPIC_OUT, message);
-                    Serial.printf("Published on topic %s : %s\n", MQTT_TOPIC_OUT, message);
+                    Serial.printf("SENT -> Topic = %s Payload = %s\n", MQTT_TOPIC_OUT, message);
                 }
             }
             MQTT.loop();

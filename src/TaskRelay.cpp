@@ -16,12 +16,6 @@ typedef struct
 
 void setRelayStateFromMQTT(int relayIndex, bool desiredState)
 {
-    if (Queue_Relay == NULL)
-    {
-        Serial.println("Queue_Relay not initialized!");
-        return;
-    }
-
     // Verify the validity of the index
     if (relayIndex < 0 || relayIndex >= RELAYS_AND_SWITCHES_COUNT)
     {
@@ -43,10 +37,6 @@ void setRelayStateFromMQTT(int relayIndex, bool desiredState)
     if (xQueueSend(Queue_Relay, &msg, 10 / portTICK_PERIOD_MS) != pdPASS)
     {
         Serial.println("Failed to send message to Queue_Relay.");
-    }
-    else
-    {
-        Serial.printf("Message sent to Queue_Relay: index=%d, state=%d\n", relayIndex, desiredState);
     }
 }
 
