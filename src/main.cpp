@@ -7,9 +7,15 @@
 #include "TaskWiFi.h"
 #include "TaskMQTT.h"
 #include "TaskSerial.h"
+#include "Dimmer.h"
+#include "DimmableSwitch.h"
+#include "TaskDimmer.h"
 
 Relay *relays[RELAYS_AND_SWITCHES_COUNT];
 Switch *switches[RELAYS_AND_SWITCHES_COUNT];
+
+Dimmer *dimmers[DIMMERS_AND_DIMMABLESWITCHES_COUNT];
+DimmableSwitch *dimmableSwitches[DIMMERS_AND_DIMMABLESWITCHES_COUNT];
 
 void setup()
 {
@@ -24,12 +30,16 @@ void setup()
   pinMode(PIN_Output_RelayB, OUTPUT);
   relays[1] = new Relay(PIN_Output_RelayB);
   switches[1] = new Switch(PIN_Input_SwitchB);
+  // Dimmer
+  ledcSetup(PWM_CHANNEL, PWM_FREQ, PWM_RESOL);
+  pinMode(PIN_Input_PushButton, INPUT);
 
   pinMode(PIN_Output_WiFi_LED, OUTPUT);
 
   initializeRelayTask(relays, switches);
   initializeWiFiTask();
   initializeMQTTTask();
+  initializeDimmerTask(dimmers, dimmableSwitches);
 }
 
 void loop()

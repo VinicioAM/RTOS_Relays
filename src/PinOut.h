@@ -9,8 +9,8 @@
 #define PIN_Output_RelayB 13 // pin for sending the command to Relay
 
 #define PIN_Input_PushButton 19 // pin for reading the Switch state - Push Button
-#define PIN_Output_Led 3        // pin for sending led command - buildin esp32
+#define PIN_Output_Led 2        // pin for sending led command - buildin esp32
 
-#define PIN_Output_WiFi_LED 2
+#define PIN_Output_WiFi_LED 3
 
 #endif // PINOUT
