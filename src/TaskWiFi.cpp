@@ -64,3 +64,16 @@ String getWiFiIPAddress()
 {
     return ipAddress;
 }
+
+void printWIFIStatus()
+{
+    if (isWiFiConnected())
+    {
+        Serial.println("Wi-Fi Status: Connected");
+        Serial.println("IP Address: " + getWiFiIPAddress());
+    }
+    else
+    {
+        Serial.println("Wi-Fi Status: Disconnected");
+    }
+}

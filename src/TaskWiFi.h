@@ -7,5 +7,6 @@
 
 void initializeWiFiTask();
 void reconnectWiFi();
+void printWIFIStatus();
 
 #endif // TASK_WIFI_H

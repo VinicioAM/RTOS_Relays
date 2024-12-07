@@ -22,6 +22,19 @@ static void onMqttDisconnect(AsyncMqttClientDisconnectReason reason);
 static void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties properties,
                           size_t len, size_t index, size_t total);
 
+void printMQTTStatus()
+{
+    if (mqttClient.connected())
+    {
+        Serial.println("MQTT Status: Connected");
+        Serial.printf("Subscribed Topic: %s\n", MQTT_TOPIC_IN);
+    }
+    else
+    {
+        Serial.println("MQTT Status: Disconnected");
+    }
+}
+
 void initializeMQTTTask()
 {
     // Create the queue for MQTT messages
@@ -125,7 +138,7 @@ static void mqttTask(void *pvParameters)
         if (WiFi.status() != WL_CONNECTED)
         {
             Serial.println("Wi-Fi disconnected. Trying to reconnect...");
-            reconnectWiFi();
+            // reconnectWiFi(); //managed by WiFi Task
         }
         else
         {
@@ -145,6 +158,7 @@ static void mqttTask(void *pvParameters)
                     // Publish the received message
                     char message[50];
                     snprintf(message, sizeof(message), "%d%d", msg.relayIndex, msg.state ? 1 : 0);
+                    mqttClient.publish(MQTT_TOPIC_OUT, MQTT_QOS, false, message);
                     Serial.printf("SENT -> Topic = %s, Payload = %s\n", MQTT_TOPIC_OUT, message);
                 }
             }

@@ -16,5 +16,6 @@ typedef struct
 
 void initializeMQTTTask();
 void publishToMQTT(int relayIndex, bool state);
+void printMQTTStatus();
 
 #endif // TASK_MQTT_H
