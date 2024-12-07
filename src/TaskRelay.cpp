@@ -108,7 +108,7 @@ void relayTask(void *parameter)
             }
         }
 
-        vTaskDelay(100 / portTICK_PERIOD_MS);
+        vTaskDelay(TIMESTEP_RELAY / portTICK_PERIOD_MS);
     }
 }
 

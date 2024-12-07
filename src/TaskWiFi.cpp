@@ -38,7 +38,7 @@ void wifiTask(void *param)
             }
         }
         digitalWrite(PIN_Output_WiFi_LED, connected);
-        vTaskDelay(1000 / portTICK_PERIOD_MS); // Delay de 1 segundo
+        vTaskDelay(TIMESTEP_WIFI / portTICK_PERIOD_MS); // Delay de 1 segundo
     }
 }
 

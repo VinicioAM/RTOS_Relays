@@ -150,6 +150,6 @@ static void mqttTask(void *pvParameters)
             }
         }
         // Interval to avoid excessive CPU usage
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(TIMESTEP_MQTT / portTICK_PERIOD_MS);
     }
 }
