@@ -20,17 +20,17 @@ void dimmerTask(void *parameters)
     {
         for (int i = 0; i < count; i++)
         {
-            if (switches[i]->dimmableReadValue())
+            if (switches[i]->detectarMudancaEstadoSwitch())
             {
                 // dimmers[i]->reverseState();
                 // dimmers[i]->setBrightness(switches[i]->desiredDutyCycle);
-                if (switches[i]->ledDesiredState)
+                if (switches[i]->ledState)
                 {
-                    dimmers[i]->setBrightness(switches[i]->desiredDutyCycle);
+                    dimmers[i]->setBrightness(switches[i]->dutyCycle);
                 }
                 else
                 {
-                    dimmers[i]->turnOff();
+                    dimmers[i]->setBrightness(0);
                 }
             }
         }
