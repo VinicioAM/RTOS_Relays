@@ -22,7 +22,16 @@ void dimmerTask(void *parameters)
         {
             if (switches[i]->dimmableReadValue())
             {
-                dimmers[i]->reverseState();
+                // dimmers[i]->reverseState();
+                // dimmers[i]->setBrightness(switches[i]->desiredDutyCycle);
+                if (switches[i]->ledDesiredState)
+                {
+                    dimmers[i]->setBrightness(switches[i]->desiredDutyCycle);
+                }
+                else
+                {
+                    dimmers[i]->turnOff();
+                }
             }
         }
         vTaskDelay(pdMS_TO_TICKS(100)); // Delay de 100ms para evitar processamento desnecessário
