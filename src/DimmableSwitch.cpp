@@ -8,8 +8,7 @@ DimmableSwitch::DimmableSwitch(int DimmableSwitchPin)
       buttonState(LOW),
       dutyCycle(255),  // Valor inicial de dutyCycle (máximo brilho)
       ledState(false), // Estado inicial do LED
-      isHolding(false),
-      pressStartTime(0)
+      isHolding(false)
 {
     pinMode(PIN_InputButton, INPUT);
 }
