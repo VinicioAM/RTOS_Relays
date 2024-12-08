@@ -9,7 +9,7 @@ enum estrutura123
 {
     SIMPLE_CLICK, // Clique simples
     DOUBLE_CLICK, // Clique duplo
-    HOLDING       // Clique segurado (holding)
+    HOLDING       // Clique segurado (acaoHolding)
 };
 
 class DimmableSwitch
@@ -42,12 +42,11 @@ public:
     int dutyCycle;
     bool ledState;
     estrutura123 detectarTipoClickUsuario();
-    bool logicaClickSimples();
-    bool logicaClickDuplo();
-    bool logicaHolding();
-    void holding();
+    bool logicaDeteccaoClickSimples();
+    bool logicaDeteccaoClickDuplo();
+    bool logicaDeteccaoHolding();
+    void acaoHolding();
     void acaoDuploclick();
-    bool isHolding;
     unsigned long pressStartTime;
 };
 

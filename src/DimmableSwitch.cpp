@@ -41,11 +41,11 @@ bool DimmableSwitch::detectarMudancaEstadoSwitch()
                 Serial.printf("[detectarMudancaEstadoSwitch] Botão pressionado\n");
 
                 // Chama as funções de lógica baseadas no tipo de clique
-                if (logicaHolding())
+                if (logicaDeteccaoHolding())
                     return true;
-                if (logicaClickDuplo())
+                if (logicaDeteccaoClickDuplo())
                     return true;
-                if (logicaClickSimples())
+                if (logicaDeteccaoClickSimples())
                     return true;
             }
         }
@@ -55,8 +55,8 @@ bool DimmableSwitch::detectarMudancaEstadoSwitch()
     return false;
 }
 
-// Lógica para holding
-bool DimmableSwitch::logicaHolding()
+// Lógica para acaoHolding
+bool DimmableSwitch::logicaDeteccaoHolding()
 {
     unsigned long pressStartTime = millis();
     unsigned long pressDuration = 0;
@@ -64,12 +64,12 @@ bool DimmableSwitch::logicaHolding()
     while (digitalRead(PIN_InputButton) == HIGH)
     {
         pressDuration = millis() - pressStartTime;
-        Serial.printf("[logicaHolding] Tempo pressionado: %lu ms\n", pressDuration);
+        Serial.printf("[logicaDeteccaoHolding] Tempo pressionado: %lu ms\n", pressDuration);
 
         if (pressDuration > HOLD_DELAY)
         {
-            holding();
-            Serial.printf("[logicaHolding] HOLD detectado\n");
+            acaoHolding();
+            Serial.printf("[logicaDeteccaoHolding] HOLD detectado\n");
             return true;
         }
     }
@@ -77,36 +77,36 @@ bool DimmableSwitch::logicaHolding()
 }
 
 // Lógica para clique duplo
-bool DimmableSwitch::logicaClickDuplo()
+bool DimmableSwitch::logicaDeteccaoClickDuplo()
 {
     delay(DOUBLE_CLICK_DELAY);
     if (digitalRead(PIN_InputButton) == HIGH)
     {
         acaoDuploclick();
-        Serial.printf("[logicaClickDuplo] Duplo clique detectado\n");
+        Serial.printf("[logicaDeteccaoClickDuplo] Duplo clique detectado\n");
         return true;
     }
     return false;
 }
 
 // Lógica para clique simples
-bool DimmableSwitch::logicaClickSimples()
+bool DimmableSwitch::logicaDeteccaoClickSimples()
 {
     delay(DOUBLE_CLICK_DELAY);
     if (digitalRead(PIN_InputButton) == HIGH)
-        return false; // Clique duplo ou holding será tratado nas funções específicas
+        return false; // Clique duplo ou acaoHolding será tratado nas funções específicas
 
     // Clique simples detectado
     ledState = !ledState;
-    Serial.printf("[logicaClickSimples] Clique simples detectado, estado do LED: %d\n", ledState);
+    Serial.printf("[logicaDeteccaoClickSimples] Clique simples detectado, estado do LED: %d\n", ledState);
     return true;
 }
 
-// Ajusta o brilho durante "holding"
-void DimmableSwitch::holding()
+// Ajusta o brilho durante "acaoHolding"
+void DimmableSwitch::acaoHolding()
 {
     unsigned long lastAdjustTime = millis();
-    Serial.printf("[holding] Iniciando ajuste de brilho, tempo inicial: %lu\n", lastAdjustTime);
+    Serial.printf("[acaoHolding] Iniciando ajuste de brilho, tempo inicial: %lu\n", lastAdjustTime);
 
     while (digitalRead(PIN_InputButton) == HIGH)
     {
@@ -114,7 +114,7 @@ void DimmableSwitch::holding()
         {
             dutyCycle = max(1, dutyCycle - BRIGHTNESS_ADJUST_STEP); // Reduz o brilho sem ultrapassar 0
             lastAdjustTime = millis();
-            Serial.printf("[holding] Brightness ajustado: %d, tempo atual: %lu\n", dutyCycle, lastAdjustTime);
+            Serial.printf("[acaoHolding] Brightness ajustado: %d, tempo atual: %lu\n", dutyCycle, lastAdjustTime);
         }
     }
 }
