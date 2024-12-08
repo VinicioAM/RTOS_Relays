@@ -40,8 +40,8 @@ void setup()
   pinMode(PIN_Output_WiFi_LED, OUTPUT);
 
   initializeRelayTask(relays, switches);
-  initializeWiFiTask();
-  initializeMQTTTask();
+  // initializeWiFiTask();
+  // initializeMQTTTask();
   initializeDimmerTask(dimmers, dimmableSwitches);
 }
 

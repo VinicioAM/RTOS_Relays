@@ -38,8 +38,7 @@ int Dimmer::getBrightness()
 
 void Dimmer::setBrightness(int brightness)
 {
-
-    Serial.printf("Setting brit to -> %i\n", brightness);
+    // Serial.printf("Setting brit to -> %i\n", brightness);
     currentBrightness = brightness;
     ledcWrite(PWM_CHANNEL, brightness); // Atualiza o valor PWM
 }
