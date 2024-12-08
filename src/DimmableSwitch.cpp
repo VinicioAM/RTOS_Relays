@@ -11,25 +11,27 @@ DimmableSwitch::DimmableSwitch(int DimmableSwitchPin)
 bool DimmableSwitch::dimmableReadValue()
 {
     readingValue = digitalRead(this->PIN_InputButton);
-
     if (readingValue != actualState_Last && !transition_started)
     {
-        // A DimmableSwitch change is detected, so start the debounce cycle
         transition_started = true;
-        elapse_time = millis(); // Start the debounce timer
+        elapse_time = millis();
     }
 
-    if (transition_started)
+    if (transition_started && millis() - elapse_time >= DEBOUNCE_TIME)
     {
-        // We are in the DimmableSwitch transition cycle, check if debounce period has elapsed
-        if (millis() - elapse_time >= DEBOUNCE_TIME)
+        if (readingValue != actualState)
         {
-            // Debounce period elapsed, assume the DimmableSwitch has settled
-            // relay.setOutputState(!relay.getOutputState());
-            transition_started = false; // End the transition cycle
-            actualState = readingValue;
+            actualState = readingValue; // Atualiza o estado real
+            transition_started = false; // Finaliza o debounce
+            actualState_Last = readingValue;
+
+            if (actualState == HIGH) // Botão foi pressionado
+            {
+                Serial.printf("Button press detected!\n");
+                return true; // Detecta o evento de pressionamento
+            }
         }
+        transition_started = false;
     }
-    actualState_Last = readingValue;
-    return actualState;
+    return false; // Sem mudança de estado
 }

@@ -9,6 +9,8 @@ Dimmer::Dimmer(int DimmerPin) : pin(DimmerPin)
 
 void Dimmer::reverseState()
 {
+    Serial.printf("valor = %i\n", currentBrightness);
+
     if (currentBrightness == 255)
     {
         turnOff();
@@ -36,6 +38,8 @@ int Dimmer::getBrightness()
 
 void Dimmer::setBrightness(int brightness)
 {
+
+    Serial.printf("Setting brit to -> %i\n", brightness);
     currentBrightness = brightness;
     ledcWrite(PWM_CHANNEL, brightness); // Atualiza o valor PWM
 }

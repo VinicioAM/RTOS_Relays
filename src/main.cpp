@@ -32,7 +32,10 @@ void setup()
   switches[1] = new Switch(PIN_Input_SwitchB);
   // Dimmer
   ledcSetup(PWM_CHANNEL, PWM_FREQ, PWM_RESOL);
+  ledcAttachPin(PIN_Output_Led, PWM_CHANNEL);
   pinMode(PIN_Input_PushButton, INPUT);
+  dimmers[0] = new Dimmer(PIN_Output_Led); // Exemplo de inicialização
+  dimmableSwitches[0] = new DimmableSwitch(PIN_Input_PushButton);
 
   pinMode(PIN_Output_WiFi_LED, OUTPUT);
 

@@ -1,5 +1,6 @@
 #include "TaskDimmer.h"
 #include "ParametersConfig.h"
+#include "Dimmer.h"
 
 void dimmerTask(void *parameters)
 {
@@ -27,7 +28,6 @@ void dimmerTask(void *parameters)
         vTaskDelay(pdMS_TO_TICKS(100)); // Delay de 100ms para evitar processamento desnecessário
     }
 }
-
 void initializeDimmerTask(Dimmer *dimmers[], DimmableSwitch *dimmableSwitches[])
 {
     static struct TaskParameters
@@ -39,6 +39,7 @@ void initializeDimmerTask(Dimmer *dimmers[], DimmableSwitch *dimmableSwitches[])
 
     taskParams.dimmers = dimmers;
     taskParams.switches = dimmableSwitches;
+    taskParams.count = DIMMERS_AND_DIMMABLESWITCHES_COUNT;
 
     xTaskCreate(
         dimmerTask,    // Função da tarefa

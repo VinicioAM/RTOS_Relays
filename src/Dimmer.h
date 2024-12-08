@@ -7,8 +7,8 @@ class Dimmer
 {
 private:
     int pin;
-    int currentBrightness;
     int memoryBrightness;
+    int currentBrightness;
 
 public:
     // Construtor
