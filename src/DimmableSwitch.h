@@ -13,15 +13,21 @@ private:
         WAITING_FOR_PRESS,
         WAITING_FOR_RELEASE,
         DEFINE_SINGLE_DOUBLE,
-        WAITING_BUTTON_RELEASE
+        WAITING_BUTTON_RELEASE,
+        HOLDING
     };
     States buttonState;
+    void holdingAction();
+    void singlePressAction();
+    void doublePressAction();
+    unsigned long inStateAtMs;
 
 public:
     // Constructor
     DimmableSwitch(int PIN_InputButton);
     void stateMachine();
-    unsigned long inStateAtMs;
+    int dutyCycle;
+    bool ledState;
 };
 
 #endif // DIMMABLESWITCH_H

@@ -17,8 +17,8 @@
 #define PWM_RESOL 8
 #define BRIGHTNESS_ADJUST_STEP 5      // Step for decreasing brightness
 #define BRIGHTNESS_ADJUST_INTERVAL 50 // Time between each brightness decrease
-#define DOUBLE_CLICK_DELAY 400        // Max time between clicks
-#define HOLD_DELAY 500                // Time to detect a hold
+#define DOUBLE_CLICK_DELAY 200        // Max time between clicks
+#define HOLD_DELAY 300                // Time to detect a hold
 #define WIFI_SSID "brisa-2270812"
 #define WIFI_PASSWORD "onx8rrcr"
 #define MQTT_BROKER_IP "192.168.0.13"

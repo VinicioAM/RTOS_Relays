@@ -21,21 +21,19 @@ void dimmerTask(void *parameters)
         for (int i = 0; i < count; i++)
         {
             switches[i]->stateMachine();
-            //     if (switches[i]->detectarMudancaEstadoSwitch())
-            //     {
-            //         // dimmers[i]->reverseState();
-            //         // dimmers[i]->setBrightness(switches[i]->desiredDutyCycle);
-            //         if (switches[i]->ledState)
-            //         {
-            //             dimmers[i]->setBrightness(switches[i]->dutyCycle);
-            //         }
-            //         else
-            //         {
-            //             dimmers[i]->setBrightness(0);
-            //         }
-            //     }
+            bool aux1 = switches[i]->ledState;
+            int aux2 = switches[i]->dutyCycle;
+            Serial.printf("Valor atual de ledState = %d, valor atual de dutyCycle = %d\n", aux1, aux2);
+            if (switches[i]->ledState)
+            {
+                dimmers[i]->setBrightness(switches[i]->dutyCycle);
+            }
+            else
+            {
+                dimmers[i]->setBrightness(0);
+            }
         }
-        vTaskDelay(pdMS_TO_TICKS(100)); // Delay de 100ms para evitar processamento desnecessário
+        vTaskDelay(pdMS_TO_TICKS(40)); // Delay de 100ms para evitar processamento desnecessário
     }
 }
 void initializeDimmerTask(Dimmer *dimmers[], DimmableSwitch *dimmableSwitches[])
