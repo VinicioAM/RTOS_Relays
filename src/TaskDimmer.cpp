@@ -20,19 +20,20 @@ void dimmerTask(void *parameters)
     {
         for (int i = 0; i < count; i++)
         {
-            if (switches[i]->detectarMudancaEstadoSwitch())
-            {
-                // dimmers[i]->reverseState();
-                // dimmers[i]->setBrightness(switches[i]->desiredDutyCycle);
-                if (switches[i]->ledState)
-                {
-                    dimmers[i]->setBrightness(switches[i]->dutyCycle);
-                }
-                else
-                {
-                    dimmers[i]->setBrightness(0);
-                }
-            }
+            switches[i]->stateMachine();
+            //     if (switches[i]->detectarMudancaEstadoSwitch())
+            //     {
+            //         // dimmers[i]->reverseState();
+            //         // dimmers[i]->setBrightness(switches[i]->desiredDutyCycle);
+            //         if (switches[i]->ledState)
+            //         {
+            //             dimmers[i]->setBrightness(switches[i]->dutyCycle);
+            //         }
+            //         else
+            //         {
+            //             dimmers[i]->setBrightness(0);
+            //         }
+            //     }
         }
         vTaskDelay(pdMS_TO_TICKS(100)); // Delay de 100ms para evitar processamento desnecessário
     }

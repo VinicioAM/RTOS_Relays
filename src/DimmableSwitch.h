@@ -7,26 +7,21 @@
 class DimmableSwitch
 {
 private:
-    int PIN_InputButton; // Switch's input pin
-    bool logicaDeteccaoClickSimples();
-    bool logicaDeteccaoClickDuplo();
-    bool logicaDeteccaoHolding();
-    void acaoHolding();
-    void acaoDuploclick();
-    void acaoSimplesclick();
-
-    bool reading;
-    bool buttonState;
-    bool lastButtonState;
-    unsigned long lastDebounceTime;
-    unsigned long clickStartTime;
-    bool primeiraVez;
+    const int PIN_InputButton;
+    enum States
+    {
+        WAITING_FOR_PRESS,
+        WAITING_FOR_RELEASE,
+        DEFINE_SINGLE_DOUBLE,
+        WAITING_BUTTON_RELEASE
+    };
+    States buttonState;
 
 public:
-    DimmableSwitch(int DimmableSwitchPin);
-    bool detectarMudancaEstadoSwitch(); // Lê o Interruptor
-    bool ledState;
-    int dutyCycle;
+    // Constructor
+    DimmableSwitch(int PIN_InputButton);
+    void stateMachine();
+    unsigned long inStateAtMs;
 };
 
 #endif // DIMMABLESWITCH_H
